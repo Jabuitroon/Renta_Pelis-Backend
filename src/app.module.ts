@@ -27,7 +27,7 @@ import { PrismaModule } from './prisma/prisma.module';
         database: config.get<string>('DB_NAME'),
         autoLoadEntities: true,
         synchronize: false,
-        // --- ESTO ES LO QUE FALTA PARA RENDER ---
+        // --- Para render.com ---
         ssl: true,
         extra: {
           ssl: {

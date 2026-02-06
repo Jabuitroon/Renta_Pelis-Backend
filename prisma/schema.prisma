@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,13 +6,81 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  user_id      String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  role         UserRole   @default(cliente)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  lastName     String     @map("last_name")
+  name         String
+  favorites    Favorite[]
+  reviews      Review[]
+
+  @@map("tbl_user")
+}
+
+model Movie {
+  imdbId    String       @id @map("imdb_id")
+  title     String
+  year      String?
+  type      String?
+  rated     String?
+  released  DateTime?
+  runtime   String?
+  plot      String?
+  language  String?
+  country   String?
+  awards    String?
+  poster    String?
+  createdAt DateTime     @default(now()) @map("created_at")
+  favorites Favorite[]
+  genres    MovieGenre[]
+  reviews   Review[]
+
+  @@map("tbl_movie")
+}
+
+model MovieGenre {
+  imdbId String
+  genre  GenreType
+  movie  Movie     @relation(fields: [imdbId], references: [imdbId], onDelete: Cascade)
+
+  @@id([imdbId, genre])
+  @@map("tbl_movie_genre")
+}
+
+model Favorite {
+  userId String @map("user_id")
+  imdbId String @map("imdb_id")
+  movie  Movie  @relation(fields: [imdbId], references: [imdbId], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+
+  @@id([userId, imdbId])
+  @@map("tbl_favorite")
+}
+
+model Review {
+  reviewId  Int      @id @default(autoincrement()) @map("review_id")
+  rating    Int
+  comment   String?
+  userId    String   @map("user_id")
+  imdbId    String   @map("imdb_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  movie     Movie    @relation(fields: [imdbId], references: [imdbId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+
+  @@unique([userId, imdbId])
+  @@map("tbl_review")
+}
+
 enum UserRole {
   admin
   cliente
 }
 
 enum GenreType {
-  Acción_y_Aventuras
+  // Acción_y_Aventuras
   Anime
   Drama
   Documental
@@ -43,75 +105,3 @@ enum RentState {
   reserved
   unavailable
 }
-
-model User {
-  user_id      String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  role         UserRole @default(cliente)
-  createdAt    DateTime @default(now()) @map("created_at")
-
-  favorites    Favorite[]
-  reviews      Review[]
-
-  @@map("tbl_user")
-}
-
-model Movie {
-  imdbId     String   @id @map("imdb_id")
-  title      String
-  year       String?
-  type       String?
-  rated      String?
-  released   DateTime?
-  runtime    String?
-  plot       String?
-  language   String?
-  country    String?
-  awards     String?
-  poster     String?
-  createdAt  DateTime @default(now()) @map("created_at")
-
-  genres     MovieGenre[]
-  favorites  Favorite[]
-  reviews    Review[]
-
-  @@map("tbl_movie")
-}
-
-model MovieGenre {
-  imdbId String
-  genre  GenreType
-
-  movie  Movie @relation(fields: [imdbId], references: [imdbId], onDelete: Cascade)
-
-  @@id([imdbId, genre])
-  @@map("tbl_movie_genre")
-}
-
-model Favorite {
-  userId String @map("user_id")
-  imdbId String @map("imdb_id")
-
-  user   User   @relation(fields: [userId], references: [user_id], onDelete: Cascade)
-  movie  Movie  @relation(fields: [imdbId], references: [imdbId], onDelete: Cascade)
-
-  @@id([userId, imdbId])
-  @@map("tbl_favorite")
-}
-
-model Review {
-  reviewId Int    @id @default(autoincrement()) @map("review_id")
-  rating   Int
-  comment  String?
-  userId   String @map("user_id")
-  imdbId   String @map("imdb_id")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  user     User   @relation(fields: [userId], references: [user_id], onDelete: Cascade)
-  movie    Movie  @relation(fields: [imdbId], references: [imdbId], onDelete: Cascade)
-
-  @@unique([userId, imdbId])
-  @@map("tbl_review")
-}
-
