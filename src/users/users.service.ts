@@ -62,7 +62,7 @@ export class UsersService {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       throw new BadRequestException(
-        'Error al crear el usuario: ' + errorMessage,
+        'Error al Buscar Usuarios: ' + errorMessage,
       );
     }
   }
