@@ -8,16 +8,72 @@ datasource db {
 
 model User {
   user_id      String     @id @default(uuid())
-  email        String     @unique
-  passwordHash String     @map("password_hash")
-  role         UserRole   @default(cliente)
-  createdAt    DateTime   @default(now()) @map("created_at")
-  lastName     String     @map("last_name")
   name         String
+  lastName     String     @map("last_name")
+  phone        String?
+  email        String     @unique
+  backupEmail  String?
+  passwordHash String     @map("password_hash")
+  country      String?    @default("CO")
+  language     String?    @default("es-Es")
   favorites    Favorite[]
   reviews      Review[]
+  role         UserRole   @default(cliente)
+  avatar       String?
 
+  createdAt          DateTime @default(now()) @map("created_at")
+  updateAt           DateTime @updatedAt
+  phoneConfirm       Boolean  @default(false)
+  emailConfirm       Boolean  @default(false)
+  backupEmailConfirm Boolean  @default(false)
+
+  twoFactorEnable Boolean   @default(false)
+  twoFactorSecret String?
+  sessions        Session[]
+
+  status       UserStatusEnum   @default(ACTIVE)
+  authProvider AuthProviderEnum @default(LOCAL)
+
+  @@index([email])
+  @@index([createdAt])
   @@map("tbl_user")
+}
+
+model Session {
+  id     String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+
+  refreshToken String
+
+  userAgent String?
+  ipAddress String?
+  location  String?
+
+  isActive Boolean @default(true)
+
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([userAgent])
+  @@index([ipAddress])
+}
+
+enum UserStatusEnum {
+  ACTIVE
+  INACTIVE
+  DRAFT
+  BLOCKED
+}
+
+enum AuthProviderEnum {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+  OTHER
 }
 
 model Movie {
