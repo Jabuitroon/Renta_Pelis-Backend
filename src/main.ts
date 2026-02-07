@@ -12,9 +12,9 @@ async function bootstrap() {
   // Permite utilizar class transformer a nivel global para los dto
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
+      whitelist: true, // Elimina campos que no estén en el DTO
+      forbidNonWhitelisted: true, // Lanza error si envían campos de más
+      transform: true, // Convierte tipos automáticamente
     }),
   );
 
