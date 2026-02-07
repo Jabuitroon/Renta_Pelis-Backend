@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   Injectable,
   BadRequestException,
@@ -23,9 +24,24 @@ export class UsersService {
     user_id: true,
     name: true,
     lastName: true,
+    phone: true,
     email: true,
+    backupEmail: true,
+    country: true,
+    language: true,
     role: true,
+    avatar: true,
     createdAt: true,
+    updateAt: true,
+    phoneConfirm: true,
+    emailConfirm: true,
+    backupEmailConfirm: true,
+    twoFactorEnable: true,
+    status: true,
+    authProvider: true,
+    favorites: true,
+    reviews: true,
+    sessions: true,
   };
 
   async create(payload: CreateUserDto) {
@@ -84,6 +100,7 @@ export class UsersService {
 
     if (password) {
       dataToUpdate.passwordHash = await this.hashingService.hash(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         password.trim(),
       );
     }
