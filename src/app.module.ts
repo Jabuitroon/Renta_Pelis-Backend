@@ -8,10 +8,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { SessionsModule } from './sessions/sessions.module';
+import { TokensModule } from './tokens/tokens.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { TestModule } from './test/test.module';
 
 @Module({
   imports: [
     UsersModule,
+    CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -39,6 +43,8 @@ import { SessionsModule } from './sessions/sessions.module';
     }),
     PrismaModule,
     SessionsModule,
+    TokensModule,
+    TestModule,
   ],
   controllers: [AppController],
   providers: [AppService],

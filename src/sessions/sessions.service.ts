@@ -6,8 +6,9 @@ import {
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { SessionInterface } from './interfaces/session';
+// import { SessionInterface } from './interfaces/session';
 import { Prisma } from '@prisma/client';
+import { DeleteSessionDto } from './dto/delete-session.dto';
 
 @Injectable()
 export class SessionsService {
@@ -87,7 +88,21 @@ export class SessionsService {
     }
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} session`;
+  async remove(userId: string, payload: DeleteSessionDto) {
+    try {
+      return await this.prisma.session.delete({
+        where: { userId: userId, id: payload.id },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(
+          `Usuario con id ${userId} no existe para eliminar`,
+        );
+      }
+      throw new InternalServerErrorException();
+    }
   }
 }
