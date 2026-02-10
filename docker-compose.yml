@@ -1,0 +1,41 @@
+services:
+  app:
+    build: ./
+    volumes:
+      - ./src:/usr/src/app/src
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env  # Esto cargará DATABASE_URL, REDIS_URL y todas las demás
+    command: sh -c "pnpm run start:dev"
+    environment:
+      - PORT=${PORT}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+
+  auth-db:
+    container_name: auth-db
+    image: postgres:16.2
+    restart: unless-stopped      # Más inteligente que 'always' (no reinicia si tú lo detuviste)
+    environment:
+      POSTGRES_USER: ${DB_USER:-r00t}     # Uso de variables (más profesional)
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-r00t}
+      POSTGRES_DB: rent_movies
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+  auth-redis:
+    container_name: auth-redis
+    image: redis:7.2 # Usamos la imagen oficial de Redis
+    restart: always
+    volumes:
+      - redis_data:/data # Persistimos los datos de Redis
+    command: redis-server --appendonly yes # Habilitamos persistencia
+    ports:
+      - '6379:6379'
+
+volumes:
+  redis_data: # Definimos el volumen para Redis directamente aquí, no es necesario un archivo aparte dentro del proyecto
