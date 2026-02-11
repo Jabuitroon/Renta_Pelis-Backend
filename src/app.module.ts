@@ -11,11 +11,23 @@ import { SessionsModule } from './sessions/sessions.module';
 import { TokensModule } from './tokens/tokens.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TestModule } from './test/test.module';
+import KeyvRedis from '@keyv/redis';
 
 @Module({
   imports: [
     UsersModule,
-    CacheModule.register({ isGlobal: true }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: (configService: ConfigService) => {
+        return {
+          ttl: 5000,
+          stores: [
+            new KeyvRedis({ url: configService.get<string>('REDIS_URL') }),
+          ],
+        };
+      },
+      inject: [ConfigService],
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

@@ -6,9 +6,9 @@ import {
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { PrismaService } from '../prisma/prisma.service';
-// import { SessionInterface } from './interfaces/session';
 import { Prisma } from '@prisma/client';
 import { DeleteSessionDto } from './dto/delete-session.dto';
+import { GetAllSessions } from './interfaces/session';
 
 @Injectable()
 export class SessionsService {
@@ -59,7 +59,7 @@ export class SessionsService {
     return await this.prisma.session.findMany({
       where: {
         userId: userId,
-        isActive: true,
+        // isActive: true, solo activas
       },
       select: this.sessionSelector,
       orderBy: { createdAt: 'desc' },
@@ -72,7 +72,6 @@ export class SessionsService {
         where: {
           userId: userId,
           id: payload.id,
-          isActive: true,
         },
         data: payload,
         select: this.sessionSelector,
@@ -100,6 +99,24 @@ export class SessionsService {
       ) {
         throw new NotFoundException(
           `Usuario con id ${userId} no existe para eliminar`,
+        );
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async deleteAllUserSessions(userId: string) {
+    try {
+      return await this.prisma.session.deleteMany({
+        where: { userId: userId },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(
+          `Usuario con id ${userId} no existe para eliminar sesiones`,
         );
       }
       throw new InternalServerErrorException();

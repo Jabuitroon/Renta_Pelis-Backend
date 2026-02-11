@@ -10,6 +10,9 @@ export interface SessionInterface {
   lastUsedAt: Date;
 }
 
+export interface GetAllSessions {
+  userId: string;
+}
 // Definir una interface que represente el "Payload" del JWT y otra para el objeto User que se inyecta en la petición.
 
 export interface JwtPayload {

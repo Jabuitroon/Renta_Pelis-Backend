@@ -13,11 +13,6 @@ export class CreateSessionDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsUUID()
-  id!: string;
-
-  @IsString()
-  @IsNotEmpty()
   refreshToken!: string;
 
   @IsString()

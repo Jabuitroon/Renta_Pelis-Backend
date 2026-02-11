@@ -1,8 +1,19 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateSessionDto } from './create-session.dto';
-import { IsBoolean, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class DeleteSessionDto extends PartialType(CreateSessionDto) {
+  @IsString()
+  @IsNotEmpty()
+  @IsUUID()
+  id!: string;
+
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;

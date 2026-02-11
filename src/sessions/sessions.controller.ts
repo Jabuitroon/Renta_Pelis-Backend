@@ -10,6 +10,7 @@ import {
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
+import { DeleteSessionDto } from './dto/delete-session.dto';
 
 @Controller('sessions')
 export class SessionsController {
@@ -31,7 +32,7 @@ export class SessionsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() deleteSessionDto: UpdateSessionDto) {
+  remove(@Param('id') id: string, @Body() deleteSessionDto: DeleteSessionDto) {
     return this.sessionsService.remove(id, deleteSessionDto);
   }
 }
