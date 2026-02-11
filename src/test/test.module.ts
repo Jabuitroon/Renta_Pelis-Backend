@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { CacheModule } from '@nestjs/cache-manager';
 import { TestController } from './test.controller';
 import { TokensService } from '../tokens/tokens.service';
+import { EmailsModule } from '../emails/emails.module';
 
 @Module({
-  imports: [CacheModule.register()],
+  imports: [EmailsModule],
   controllers: [TestController],
   providers: [TokensService],
 })

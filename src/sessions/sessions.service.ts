@@ -8,7 +8,6 @@ import { UpdateSessionDto } from './dto/update-session.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { DeleteSessionDto } from './dto/delete-session.dto';
-import { GetAllSessions } from './interfaces/session';
 
 @Injectable()
 export class SessionsService {

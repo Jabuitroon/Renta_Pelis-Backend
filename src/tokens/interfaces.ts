@@ -9,7 +9,7 @@ export interface CreateToken {
 export interface PayloadToken {
   userId: string;
   type: AuthorizationToken;
-  ttl: number;
+  token: string;
 }
 export interface RevokeToken {
   userId: string;

@@ -13,6 +13,8 @@ services:
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - RESEND_FROM_EMAIL=${RESEND_FROM_EMAIL}
 
   auth-db:
     container_name: auth-db
