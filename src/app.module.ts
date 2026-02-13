@@ -43,12 +43,12 @@ import { EmailsModule } from './emails/emails.module';
         autoLoadEntities: true,
         synchronize: false,
         // --- Para render.com ---
-        ssl: true,
-        extra: {
-          ssl: {
-            rejectUnauthorized: false, // Permite certificados auto-firmados de Render
-          },
-        },
+        // ssl: true,
+        // extra: {
+        //   ssl: {
+        //     rejectUnauthorized: false, // Permite certificados auto-firmados de Render
+        //   },
+        // },
       }),
     }),
     PrismaModule,

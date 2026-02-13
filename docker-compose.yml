@@ -1,4 +1,5 @@
 services:
+  # De manera declarativa definimos los servicios que componen nuestra aplicación, en este caso el api, la base de datos y el cache
   api:
     container_name: nest_api
     build:
@@ -22,9 +23,10 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    # Montar un volumen de datos persistentes para PostgreSQL
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -32,9 +34,11 @@ services:
   redis:
     container_name: redis_cache
     image: redis:7-alpine
+    # Puerto izquierdo: Puerto del host, Puerto derecho: Puerto del contenedor
     ports:
       - "6379:6379"
     volumes:
+    # Mountar un volumen de datos persistentes para Redis
       - redis_data:/data
     command: redis-server --appendonly yes
     restart: unless-stopped

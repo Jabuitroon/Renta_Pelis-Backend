@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsOptional,
   IsNotEmpty,
+  IsNumber,
 } from 'class-validator';
 import { AuthProviderEnum, UserRole } from '../../generated/prisma/client';
 
@@ -12,32 +13,32 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(2)
-  name!: string;
+  name: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(2)
-  lastName!: string;
+  lastName: string;
 
   @IsEmail()
-  email!: string;
+  email: string;
 
   @IsString()
   @MinLength(8)
-  password!: string;
+  password: string;
 
-  @IsString()
+  @IsNumber()
   @MinLength(10)
-  phone!: string;
+  phone: string;
 
   @IsString()
-  country!: string;
+  country: string;
 
   @IsString()
-  language!: string;
+  language: string;
 
   @IsString()
-  authProvider!: AuthProviderEnum;
+  authProvider: AuthProviderEnum;
   @IsEnum(UserRole) // Valida que el valor coincida con el Enum de la DB entre admin y cliente
   @IsOptional() // Default(user) en Prisma
   role?: UserRole;
