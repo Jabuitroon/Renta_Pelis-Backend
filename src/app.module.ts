@@ -26,7 +26,7 @@ import { EmailsModule } from './emails/emails.module';
       isGlobal: true,
       useFactory: async () => ({
         store: await redisStore({
-          socket: { host: 'auth-redis', port: 6379 },
+          socket: { host: 'redis', port: 6379 },
         }),
       }),
       inject: [ConfigService],

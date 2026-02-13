@@ -1,6 +1,9 @@
 dist/
 node_modules/
 postgres/
-
-.env
+build
+prisma/migrations
+.git
+.gitignore
+README.md
 .vscode/

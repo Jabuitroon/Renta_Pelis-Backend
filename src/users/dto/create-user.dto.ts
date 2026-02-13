@@ -6,7 +6,8 @@ import {
   IsOptional,
   IsNotEmpty,
 } from 'class-validator';
-import { AuthProviderEnum, UserRole } from '@prisma/client';
+import { AuthProviderEnum, UserRole } from '../../generated/prisma/client';
+
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
