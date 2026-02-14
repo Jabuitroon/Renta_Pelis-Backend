@@ -1,7 +1,6 @@
 import {
   Injectable,
   BadRequestException,
-  ConflictException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -43,9 +42,25 @@ export class UsersService {
     sessions: true,
   };
 
+  async findByEmail(email: string, select?: Prisma.UserSelect) {
+    return await this.prisma.user.findUnique({
+      where: {
+        email: email.toLowerCase().trim(),
+      },
+      select, // Si no se pasa, trae todo el objeto
+    });
+  }
+
   async create(payload: CreateUserDto) {
+    const { password, ...userData } = payload;
+    // Buscar si el email ya existe de forma proactiva
+    const existingUser = await this.findByEmail(payload.email);
+
+    if (existingUser) {
+      throw new BadRequestException('El correo electrónico ya existe');
+    }
+
     try {
-      const { password, ...userData } = payload;
       // Hashear la contraseña
       const hashedPassword = await this.hashingService.hash(password.trim());
       // Guardar en PostgreSQL usando Prisma
@@ -58,12 +73,9 @@ export class UsersService {
         select: this.userSelector,
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException('El correo electrónico ya existe');
-        }
-      }
-      throw new InternalServerErrorException('Error al crear el usuario');
+      throw new InternalServerErrorException(
+        `Error al crear el usuario: ${error}`,
+      );
     }
   }
 

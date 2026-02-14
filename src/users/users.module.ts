@@ -13,5 +13,7 @@ import { HashingService } from '../providers/hashing/hashing.service';
     { provide: HashingService, useClass: BcryptService },
     UsersService,
   ],
+  // Para que AuthService pueda usar UsersService, este último debe ser "público" dentro de su propio módulo.
+  exports: [UsersService],
 })
 export class UsersModule {}

@@ -13,6 +13,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { TestModule } from './test/test.module';
 import { redisStore } from 'cache-manager-redis-yet';
 import { EmailsModule } from './emails/emails.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { EmailsModule } from './emails/emails.module';
       }),
       inject: [ConfigService],
     }),
+    // Configuración asíncrona para usar variables de entorno
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -56,6 +58,7 @@ import { EmailsModule } from './emails/emails.module';
     TokensModule,
     TestModule,
     EmailsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

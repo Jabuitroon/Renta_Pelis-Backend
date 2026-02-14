@@ -2,14 +2,14 @@ import {
   IsString,
   MinLength,
   IsEmail,
+  IsNotEmpty,
   IsEnum,
   IsOptional,
-  IsNotEmpty,
   IsPhoneNumber,
 } from 'class-validator';
-import { AuthProviderEnum, UserRole } from '../../generated/prisma/client';
+import { AuthProviderEnum, UserRole } from '../../generated/prisma/enums';
 
-export class CreateUserDto {
+export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(2)
