@@ -23,8 +23,7 @@ export class AuthService {
     try {
       const user = await this.usersService.create(newUser);
       return {
-        accessToken: 'fake-jwt-token', // Aquí deberías generar un token real usando JwtService
-        // accessToken: this.jwtService.sign({ id: user.user_id }),
+        accessToken: this.jwtService.sign({ id: user.user_id }),
         user: {
           id: user.user_id,
           email: user.email,
@@ -56,6 +55,8 @@ export class AuthService {
       throw new UnauthorizedException('Contraseña incorrecta');
     }
 
+    // Definir el Payload (lo que viajará dentro del token)
+    // Solo info no sensible.
     const payload = { email: user.email };
     const token = await this.jwtService.signAsync(payload);
 

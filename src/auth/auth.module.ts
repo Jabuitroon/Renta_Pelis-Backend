@@ -13,15 +13,17 @@ import { BcryptService } from '../providers/hashing/bcrypt.service';
   imports: [
     UsersModule,
     PassportModule,
-    JwtModule.registerAsync({
-      inject: [ConfigService],
+    JwtModule.register({
+      // inject: [ConfigService],
       global: true,
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: config.get<number>('JWT_EXPIRES_IN') || 3600,
-        },
-      }),
+      secret: process.env.JWT_SECRET, // <--- AQUÍ SE DEFINE LA KEY
+      signOptions: { expiresIn: '2h' },
+      // useFactory: (config: ConfigService) => ({
+      //   secret: config.get<string>('JWT_SECRET'),
+      //   signOptions: {
+      //     expiresIn: config.get<number>('JWT_EXPIRES_IN') || 3600,
+      //   },
+      // }),
     }),
   ],
   providers: [

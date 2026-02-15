@@ -13,6 +13,8 @@ export const envSchema = z.object({
   REDIS_URL: z.string().min(1, 'REDIS_URL is required.'),
   RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required.'),
   RESEND_FROM_EMAIL: z.string().min(1, 'RESEND_FROM_EMAIL is required.'),
+  JWT_SECRET: z.string().min(1, 'JWT_SECRET is required.'),
+  JWT_EXPIRES_IN: z.string().min(1, 'JWT_EXPIRES_IN is required.'),
 });
 
 type envType = z.infer<typeof envSchema>;
@@ -32,4 +34,6 @@ export const envs: envType = {
   REDIS_URL: envParsed.data.REDIS_URL,
   RESEND_API_KEY: envParsed.data.RESEND_API_KEY,
   RESEND_FROM_EMAIL: envParsed.data.RESEND_FROM_EMAIL,
+  JWT_SECRET: envParsed.data.JWT_SECRET,
+  JWT_EXPIRES_IN: envParsed.data.JWT_EXPIRES_IN,
 };
