@@ -19,7 +19,7 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: '.develop.env',
     }),
     CacheModule.registerAsync({
       isGlobal: true,
