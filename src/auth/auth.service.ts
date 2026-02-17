@@ -65,7 +65,7 @@ export class AuthService {
     };
   }
 
-  async getProfile({ email, role }: { email: string; role: string }) {
+  async getProfile({ email }: { email: string; role: string }) {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');

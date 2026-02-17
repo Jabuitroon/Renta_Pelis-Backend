@@ -8,9 +8,18 @@ export interface responseAuth {
   };
 }
 
+export interface UserActiveInterface {
+  email: string;
+  role: string;
+}
+
+export interface UserProfile {
+  email: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
+
 export interface RequestWithUser extends Request {
-  user: {
-    email: string;
-    role: string;
-  };
+  user: UserProfile;
 }

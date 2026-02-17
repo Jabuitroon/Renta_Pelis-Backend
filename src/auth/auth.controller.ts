@@ -13,8 +13,6 @@ import { RegisterDto } from './dto/register.dto';
 import type { RequestWithUser, responseAuth } from './interfaces';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './guards/auth.guard';
-import { Roles } from './decorators/roles.decorator';
-import { RolesGuard } from './guards/roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -33,13 +31,10 @@ export class AuthController {
   }
 
   @Get('profile')
-  // RolesGuard es un guard personalizado para verificar roles nest g guard auth/guards/RolesGuard --flat --no-spec
-  @UseGuards(AuthGuard, RolesGuard) // Asegura que solo los usuarios autenticados puedan acceder a esta ruta
+  @UseGuards(AuthGuard) // Asegura que solo los usuarios autenticados puedan acceder a esta ruta
   // Decorador personalizado para fijar metadatos de roles requeridos
-  // @Roles('admin')
-  @Roles('admin')
   getProfile(@Req() req: RequestWithUser) {
     // Implementar la lógica para obtener el perfil del usuario autenticado
-    return req.user;
+    return this.authService.getProfile(req.user);
   }
 }
