@@ -13,6 +13,9 @@ import { TestModule } from './test/test.module';
 import { redisStore } from 'cache-manager-redis-yet';
 import { EmailsModule } from './emails/emails.module';
 import { AuthModule } from './auth/auth.module';
+import { OrdersModule } from './orders/orders.module';
+import { MoviesModule } from './movies/movies.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -57,6 +60,8 @@ import { AuthModule } from './auth/auth.module';
     TestModule,
     EmailsModule,
     AuthModule,
+    OrdersModule,
+    MoviesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

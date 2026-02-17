@@ -6,13 +6,13 @@ import {
   HttpStatus,
   Get,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
-import type { RequestWithUser, responseAuth } from './interfaces';
+import type { responseAuth, UserActiveInterface } from './interfaces';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './guards/auth.guard';
+import { ActiveUser } from '../common/decorators/active-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -33,8 +33,7 @@ export class AuthController {
   @Get('profile')
   @UseGuards(AuthGuard) // Asegura que solo los usuarios autenticados puedan acceder a esta ruta
   // Decorador personalizado para fijar metadatos de roles requeridos
-  getProfile(@Req() req: RequestWithUser) {
-    // Implementar la lógica para obtener el perfil del usuario autenticado
-    return this.authService.getProfile(req.user);
+  getProfile(@ActiveUser() user: UserActiveInterface) {
+    return this.authService.getProfile(user);
   }
 }

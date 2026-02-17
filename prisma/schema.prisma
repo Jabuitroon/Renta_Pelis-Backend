@@ -1,7 +1,7 @@
 generator client {
-  provider        = "prisma-client"
-  output          = "../src/generated/prisma"
-  moduleFormat    = "cjs"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -35,6 +35,7 @@ model User {
 
   status       UserStatusEnum   @default(ACTIVE)
   authProvider AuthProviderEnum @default(LOCAL)
+  orders       Order[]
 
   @@index([email])
   @@index([createdAt])
@@ -42,7 +43,7 @@ model User {
 }
 
 model Session {
-  id     String @id @default(uuid())
+  id String @id @default(uuid())
 
   userId String
   user   User   @relation(fields: [userId], references: [user_id], onDelete: Cascade)
@@ -79,22 +80,24 @@ enum AuthProviderEnum {
 }
 
 model Movie {
-  imdbId    String       @id @map("imdb_id")
-  title     String
-  year      String?
-  type      String?
-  rated     String?
-  released  DateTime?
-  runtime   String?
-  plot      String?
-  language  String?
-  country   String?
-  awards    String?
-  poster    String?
-  createdAt DateTime     @default(now()) @map("created_at")
-  favorites Favorite[]
-  genres    MovieGenre[]
-  reviews   Review[]
+  imdbId     String       @id @map("imdb_id")
+  title      String
+  year       String?
+  type       String?
+  rated      String?
+  released   DateTime?
+  runtime    String?
+  plot       String?
+  language   String?
+  country    String?
+  awards     String?
+  poster     String?
+  prices     MoviePrice[]
+  createdAt  DateTime     @default(now()) @map("created_at")
+  favorites  Favorite[]
+  genres     MovieGenre[]
+  reviews    Review[]
+  orderItems OrderItem[]
 
   @@map("tbl_movie")
 }
@@ -116,6 +119,33 @@ model Favorite {
 
   @@id([userId, imdbId])
   @@map("tbl_favorite")
+}
+
+model MoviePrice {
+  id      Int    @id @default(autoincrement())
+  movieId String @map("movie_id")
+  movie   Movie  @relation(fields: [movieId], references: [imdbId])
+
+  // Define si es 'RENT' o 'BUY'
+  transactionType TransactionType @map("transaction_type")
+
+  // Calidad: 'HD', '4K'
+  quality QualityType
+
+  price Decimal @db.Decimal(10, 2)
+
+  @@unique([movieId, transactionType, quality])
+  @@map("tbl_movie_prices")
+}
+
+enum TransactionType {
+  RENT
+  BUY
+}
+
+enum QualityType {
+  HD
+  ULTRA_HD // 4K
 }
 
 model Review {
@@ -162,4 +192,41 @@ enum RentState {
   available
   reserved
   unavailable
+}
+
+enum OrderStatus {
+  PENDING // Pendiente por pagar
+  PAID // Pagada
+  CANCELED // Cancelada
+  REFUNDED // Reembolsada
+}
+
+model Order {
+  orderId     String      @id @default(uuid()) @map("order_id")
+  userId      String      @map("user_id")
+  totalAmount Float       @map("total_amount")
+  status      OrderStatus @default(PENDING)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relaciones
+  user  User        @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+  items OrderItem[]
+
+  @@index([userId])
+  @@map("tbl_order")
+}
+
+model OrderItem {
+  id      String @id @default(uuid())
+  orderId String @map("order_id")
+  imdbId  String @map("imdb_id")
+  price   Float // Precio al momento de la compra
+
+  // Relaciones
+  order Order @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  movie Movie @relation(fields: [imdbId], references: [imdbId])
+
+  @@map("tbl_order_item")
 }
