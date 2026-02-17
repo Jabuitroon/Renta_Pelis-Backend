@@ -26,9 +26,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
   @Get()
-  // RolesGuard es un guard personalizado para verificar roles *nest g guard auth/guards/RolesGuard --flat --no-spec
-  @UseGuards(AuthGuard, RolesGuard) // Asegura que solo los usuarios autenticados puedan acceder a esta ruta
-  // Se puede escribir directamente el string para las pruebas => @Roles('admin')
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin)
   findAll() {
     return this.usersService.findAll();
