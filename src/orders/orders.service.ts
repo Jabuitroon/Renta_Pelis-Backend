@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   NotFoundException,
@@ -62,9 +58,9 @@ export class OrdersService {
     });
   }
 
-  // findAll() {
-  //   return `This action returns all orders`;
-  // }
+  findAll() {
+    return `This action returns all orders`;
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} order`;

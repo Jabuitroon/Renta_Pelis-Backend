@@ -9,7 +9,6 @@ WORKDIR /app
 
 FROM base AS dev
 
-ENV NODE_ENV=development
 ENV CI=true
 
 # 2. Copiar archivos de dependencias

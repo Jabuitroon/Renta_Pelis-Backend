@@ -3,8 +3,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-import { envs } from './config/env.load';
-console.log('DATABASE_URL:', process.env.DATABASE_URL);
+
+console.log('DATABASE_URL:', process.env.DATABASE_URL); // Verifica que la variable de entorno se esté cargando correctamente
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
@@ -19,7 +19,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: envs.ALLOWED_ORIGINS,
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || [],
     credentials: true, // Permite cookies
     // methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     // allowedHeaders: ['Content-Type', 'Authorization'],
@@ -33,7 +33,9 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-  await app.listen(envs.PORT);
-  console.log(`🚀 Server running on http://localhost:${envs.PORT}`);
+  await app.listen(process.env.PORT || 3000);
+  console.log(
+    `🚀 Server running on http://localhost:${process.env.PORT || 3000}`,
+  );
 }
 bootstrap();

@@ -1,5 +1,11 @@
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
 import { z } from 'zod';
+
+// Detectamos cuál archivo cargar igual que en el package.json
+const envFile = process.env.NODE_ENV ? `.${process.env.NODE_ENV}.env` : '.env';
+
+// Cargamos manualmente el archivo correcto
+dotenv.config({ path: envFile });
 
 // Esquema de validación de variables de entorno con ZOD
 export const envSchema = z.object({
@@ -16,24 +22,4 @@ export const envSchema = z.object({
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required.'),
   JWT_EXPIRES_IN: z.string().min(1, 'JWT_EXPIRES_IN is required.'),
 });
-
-type envType = z.infer<typeof envSchema>;
-
-const envParsed = envSchema.safeParse(process.env);
-
 // Algo no se encuentra en .env como el puerto o nombre de db
-if (!envParsed.success) {
-  console.error('❌ Config validation error:', envParsed.error.format());
-  throw new Error('Invalid environment variables');
-}
-
-export const envs: envType = {
-  PORT: envParsed.data.PORT,
-  ALLOWED_ORIGINS: envParsed.data.ALLOWED_ORIGINS,
-  DATABASE_URL: envParsed.data.DATABASE_URL,
-  REDIS_URL: envParsed.data.REDIS_URL,
-  RESEND_API_KEY: envParsed.data.RESEND_API_KEY,
-  RESEND_FROM_EMAIL: envParsed.data.RESEND_FROM_EMAIL,
-  JWT_SECRET: envParsed.data.JWT_SECRET,
-  JWT_EXPIRES_IN: envParsed.data.JWT_EXPIRES_IN,
-};

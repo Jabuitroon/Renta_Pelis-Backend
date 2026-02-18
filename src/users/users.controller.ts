@@ -17,6 +17,8 @@ import { Role } from '../auth/enums';
 import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('users')
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(Role.Admin)
 export class UsersController {
   // El controlador delega al servicio
   constructor(private readonly usersService: UsersService) {}
@@ -26,8 +28,6 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
   @Get()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin)
   findAll() {
     return this.usersService.findAll();
   }

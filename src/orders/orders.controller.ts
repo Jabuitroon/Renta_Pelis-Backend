@@ -10,6 +10,8 @@ import {
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { ActiveUser } from '../common/decorators/active-user.decorator';
+import type { UserActiveInterface } from '../common/user-active.interface';
 // import { OrderResponse } from './orders.interface';
 
 @Controller('orders')
@@ -17,9 +19,11 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  async create(@Body() createOrderDto: CreateOrderDto) {
-    const userId = 'f21e1220-1add-49db-b792-5547c489c303'; // Luego lo obtendrás del Request (JWT)
-    return this.ordersService.createOrder(userId, createOrderDto);
+  async create(
+    @ActiveUser() user: UserActiveInterface,
+    @Body() createOrderDto: CreateOrderDto,
+  ) {
+    return this.ordersService.createOrder(user.id, createOrderDto);
   }
 
   // @Get()

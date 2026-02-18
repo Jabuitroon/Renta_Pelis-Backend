@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { SessionsModule } from './sessions/sessions.module';
@@ -15,13 +14,21 @@ import { EmailsModule } from './emails/emails.module';
 import { AuthModule } from './auth/auth.module';
 import { OrdersModule } from './orders/orders.module';
 import { MoviesModule } from './movies/movies.module';
+import { envSchema } from './config/env.load';
 
 @Module({
   imports: [
-    UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.develop.env',
+      envFilePath: [`.${process.env.NODE_ENV}.env`, '.env'],
+      validate: (config) => {
+        const parsed = envSchema.safeParse(config);
+        if (!parsed.success) {
+          console.error('❌ Config validation error:', parsed.error.format());
+          throw new Error('Invalid environment variables');
+        }
+        return parsed.data;
+      },
     }),
     CacheModule.registerAsync({
       isGlobal: true,
@@ -32,27 +39,14 @@ import { MoviesModule } from './movies/movies.module';
       }),
       inject: [ConfigService],
     }),
-    // Configuración asíncrona para usar variables de entorno
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('DB_HOST'),
-        port: config.get<number>('DB_PORT'),
-        username: config.get<string>('DB_USER'),
-        password: config.get<string>('DB_PASSWORD'),
-        database: config.get<string>('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: false,
-        // --- Para render.com ---
-        // ssl: true,
-        // extra: {
-        //   ssl: {
-        //     rejectUnauthorized: false, // Permite certificados auto-firmados de Render
-        //   },
-        // },
-      }),
-    }),
+    // --- Para render.com ---
+    // ssl: true,
+    // extra: {
+    //   ssl: {
+    //     rejectUnauthorized: false, // Permite certificados auto-firmados de Render
+    //   },
+    // },
+    UsersModule,
     PrismaModule,
     SessionsModule,
     TokensModule,

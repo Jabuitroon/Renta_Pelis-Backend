@@ -32,7 +32,7 @@ export class AuthController {
 
   @Get('profile')
   @UseGuards(AuthGuard) // Asegura que solo los usuarios autenticados puedan acceder a esta ruta
-  // Decorador personalizado para fijar metadatos de roles requeridos
+  // Decorador personalizado para fijar metadatos de roles requeridos, injectar user a la request
   getProfile(@ActiveUser() user: UserActiveInterface) {
     return this.authService.getProfile(user);
   }
