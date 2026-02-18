@@ -129,7 +129,7 @@ model Favorite {
 model MoviePrice {
   id      Int    @id @default(autoincrement())
   movieId String @map("movie_id")
-  movie   Movie  @relation(fields: [movieId], references: [imdbId])
+  movie   Movie  @relation(fields: [movieId], references: [imdbId], onDelete: Cascade)
 
   // Define si es 'RENT' o 'BUY'
   transactionType TransactionType @map("transaction_type")

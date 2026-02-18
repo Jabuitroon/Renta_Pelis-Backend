@@ -3,7 +3,7 @@ import {
   IsOptional,
   IsEnum,
   IsArray,
-  IsDateString,
+  IsISO8601,
   IsNotEmpty,
   IsNumber,
   ValidateNested,
@@ -14,6 +14,7 @@ import {
   TransactionType,
 } from '../../generated/prisma/client'; // Importa el Enum generado por Prisma
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 class PriceDto {
   @IsEnum(TransactionType)
@@ -39,13 +40,34 @@ export class CreateMovieDto {
   @IsString()
   year?: string;
 
-  @IsOptional()
-  @IsDateString()
+  @IsString()
+  @IsNotEmpty()
+  type: string;
+
+  @ApiProperty({ example: '2023-12-04T16:30:00Z' })
+  @IsISO8601()
+  @IsNotEmpty()
   released?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  runtime: string;
 
   @IsOptional()
   @IsString()
   plot?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  language: string;
+
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  awards?: string;
 
   @IsOptional()
   @IsString()

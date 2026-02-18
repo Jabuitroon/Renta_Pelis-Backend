@@ -28,7 +28,7 @@ export class MoviesService {
 
   async findAllMovies() {
     return this.prisma.movie.findMany({
-      include: { genres: true },
+      include: { genres: true, prices: true },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -36,15 +36,40 @@ export class MoviesService {
   async findOne(imdbId: string) {
     return this.prisma.movie.findUnique({
       where: { imdbId },
-      include: { genres: true },
+      include: { genres: true, prices: true },
     });
   }
 
-  update(id: string, updateMovieDto: UpdateMovieDto) {
-    return `This action updates a #${id} ${updateMovieDto.title || 'movie'}`;
+  async update(imdbId: string, dto: UpdateMovieDto) {
+    const { genres, prices, ...movieData } = dto;
+
+    return this.prisma.movie.update({
+      where: { imdbId },
+      data: {
+        ...movieData,
+        // Si vienen géneros, borramos los viejos y creamos los nuevos
+        ...(genres && {
+          genres: {
+            deleteMany: {}, // Borra todos los géneros asociados a esta película
+            create: genres.map((g) => ({ genre: g })),
+          },
+        }),
+        // Si vienen precios, hacemos lo mismo
+        ...(prices && {
+          prices: {
+            deleteMany: {},
+            create: prices,
+          },
+        }),
+      },
+      include: { genres: true, prices: true },
+    });
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} movie`;
+  async remove(imdbId: string) {
+    // Si tiene Órdenes (OrderItem), Prisma lanzará error de FK.
+    return this.prisma.movie.delete({
+      where: { imdbId },
+    });
   }
 }
