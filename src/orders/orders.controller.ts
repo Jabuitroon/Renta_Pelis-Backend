@@ -10,30 +10,23 @@ import {
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { OrderResponse } from './orders.interface';
+// import { OrderResponse } from './orders.interface';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  async create(@Body() createOrderDto: CreateOrderDto): Promise<OrderResponse> {
-    const userId = 'id-extraido-del-jwt';
-    const order = await this.ordersService.createOrder(
-      userId,
-      createOrderDto.movieIds,
-    );
-    return {
-      orderId: 'id-generado',
-      userId,
-    };
+  async create(@Body() createOrderDto: CreateOrderDto) {
+    const userId = 'f21e1220-1add-49db-b792-5547c489c303'; // Luego lo obtendrás del Request (JWT)
+    return this.ordersService.createOrder(userId, createOrderDto);
   }
 
-  @Get()
-  async findAll(@Query() query: OrderQueryDto): Promise<OrderResponse[]> {
-    const userId = 'id-extraido-del-jwt';
-    return this.ordersService.getUserOrders(userId, query.status);
-  }
+  // @Get()
+  // async findAll(@Query() query: OrderQueryDto): Promise<OrderResponse[]> {
+  //   const userId = 'id-extraido-del-jwt';
+  //   return this.ordersService.getUserOrders(userId, query.status);
+  // }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {

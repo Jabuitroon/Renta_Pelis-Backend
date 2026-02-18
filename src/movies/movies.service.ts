@@ -14,21 +14,15 @@ export class MoviesService {
     if (existing)
       throw new ConflictException('La película ya existe en el catálogo');
 
-    const { genres, ...movieData } = dto;
+    const { genres, prices, ...movieData } = dto;
 
     return this.prisma.movie.create({
       data: {
         ...movieData,
-        // Detalle técnico: Insertar en la tabla de relación MovieGenre
-        genres: {
-          create: genres.map((g) => ({
-            genre: g,
-          })),
-        },
+        genres: { create: genres.map((g) => ({ genre: g })) },
+        prices: { create: prices },
       },
-      include: {
-        genres: true, // Devolver la película con sus géneros
-      },
+      include: { genres: true, prices: true },
     });
   }
 

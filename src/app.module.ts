@@ -15,7 +15,6 @@ import { EmailsModule } from './emails/emails.module';
 import { AuthModule } from './auth/auth.module';
 import { OrdersModule } from './orders/orders.module';
 import { MoviesModule } from './movies/movies.module';
-import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [

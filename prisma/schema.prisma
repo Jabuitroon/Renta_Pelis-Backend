@@ -79,6 +79,11 @@ enum AuthProviderEnum {
   OTHER
 }
 
+enum UserRole {
+  admin
+  cliente
+}
+
 model Movie {
   imdbId     String       @id @map("imdb_id")
   title      String
@@ -130,7 +135,7 @@ model MoviePrice {
   transactionType TransactionType @map("transaction_type")
 
   // Calidad: 'HD', '4K'
-  quality QualityType
+  quality QualityOption
 
   price Decimal @db.Decimal(10, 2)
 
@@ -143,9 +148,10 @@ enum TransactionType {
   BUY
 }
 
-enum QualityType {
-  HD
-  ULTRA_HD // 4K
+enum QualityOption {
+  p720
+  p1080
+  p4k
 }
 
 model Review {
@@ -160,11 +166,6 @@ model Review {
 
   @@unique([userId, imdbId])
   @@map("tbl_review")
-}
-
-enum UserRole {
-  admin
-  cliente
 }
 
 enum GenreType {
@@ -182,25 +183,6 @@ enum GenreType {
   Thriller
 }
 
-enum QualityOption {
-  p720
-  p1080
-  p4k
-}
-
-enum RentState {
-  available
-  reserved
-  unavailable
-}
-
-enum OrderStatus {
-  PENDING // Pendiente por pagar
-  PAID // Pagada
-  CANCELED // Cancelada
-  REFUNDED // Reembolsada
-}
-
 model Order {
   orderId     String      @id @default(uuid()) @map("order_id")
   userId      String      @map("user_id")
@@ -216,6 +198,13 @@ model Order {
 
   @@index([userId])
   @@map("tbl_order")
+}
+
+enum OrderStatus {
+  PENDING // Pendiente por pagar
+  PAID // Pagada
+  CANCELED // Cancelada
+  REFUNDED // Reembolsada
 }
 
 model OrderItem {

@@ -1,51 +1,64 @@
-import { Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderStatus } from '../generated/prisma/client';
 
-export type QualityOption = '720p' | '1080p' | '4k';
-
-export interface MovieInCart {
-  Title: string;
-  Year: string;
-  imdbID: string;
-  Type: string;
-  Genre: string;
-  Poster: string;
-  quality: QualityOption;
-  state: 'Alquilar' | 'Comprar';
-  days?: number;
-  price: Money;
-}
-
-type Money = {
-  amount: number;
-  currency: string;
-};
-
 @Injectable()
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
   // Crear una nueva orden (Venta iniciada)
-  async createOrder(userId: string, orderItems: MovieInCart[], total: number) {
-    const movies = await this.prisma.movie.findMany({
-      where: { imdbId: { in: orderItems.map((item) => item.imdbID) } },
-    });
+  async createOrder(userId: string, dto: CreateOrderDto) {
+    // 1. Usar una Transacción de Prisma para asegurar integridad
+    return this.prisma.$transaction(async (tx) => {
+      let total = 0;
+      const itemsToCreate: { imdbId: string; price: number }[] = [];
 
-    return this.prisma.order.create({
-      data: {
-        userId,
-        totalAmount: total,
-        status: 'PENDING',
-        items: {
-          create: movies.map((m) => ({
-            imdbId: m.imdbId,
-            price: 10, // Precio congelado al momento de compra
-          })),
+      for (const item of dto.items) {
+        // Buscar el precio específico configurado para esa película
+        const priceConfig = await tx.moviePrice.findUnique({
+          where: {
+            movieId_transactionType_quality: {
+              movieId: item.imdbId,
+              transactionType: item.type,
+              quality: item.quality,
+            },
+          },
+        });
+
+        if (!priceConfig) {
+          throw new BadRequestException(
+            `La película ${item.imdbId} no está disponible en ${item.type} ${item.quality}`,
+          );
+        }
+
+        total += Number(priceConfig.price);
+        itemsToCreate.push({
+          imdbId: item.imdbId,
+          price: Number(priceConfig.price), // Congelamos el precio actual
+        });
+      }
+
+      // 2. Crear la Orden y sus detalles
+      return tx.order.create({
+        data: {
+          userId,
+          totalAmount: total,
+          status: 'PENDING',
+          items: {
+            create: itemsToCreate,
+          },
         },
-      },
-      include: { items: true },
+        include: { items: true },
+      });
     });
   }
 
