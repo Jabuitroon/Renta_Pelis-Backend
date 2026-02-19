@@ -14,6 +14,7 @@ export interface UserActiveInterface {
 }
 
 export interface UserProfile {
+  userId: string;
   email: string;
   role: string;
   iat: number;

@@ -1,20 +1,16 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { ActiveUser } from '../common/decorators/active-user.decorator';
 import type { UserActiveInterface } from '../common/user-active.interface';
-// import { OrderResponse } from './orders.interface';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/enums';
 
 @Controller('orders')
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(Role.Client)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
@@ -23,23 +19,21 @@ export class OrdersController {
     @ActiveUser() user: UserActiveInterface,
     @Body() createOrderDto: CreateOrderDto,
   ) {
-    return this.ordersService.createOrder(user.id, createOrderDto);
+    console.log('User', user);
+
+    return this.ordersService.createOrder(user.email, createOrderDto);
   }
 
-  // @Get()
-  // async findAll(@Query() query: OrderQueryDto): Promise<OrderResponse[]> {
-  //   const userId = 'id-extraido-del-jwt';
-  //   return this.ordersService.getUserOrders(userId, query.status);
-  // }
+  @Get()
+  async findAll(@ActiveUser() user: UserActiveInterface) {
+    // En un entorno real, el userId vendría del @Request() req.user
+
+    return this.ordersService.findAll(user.email);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.ordersService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-  //   return this.ordersService.update(+id, updateOrderDto);
   // }
 
   // @Delete(':id')
