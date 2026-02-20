@@ -16,14 +16,15 @@ export class OrdersService {
   ) {}
 
   // Método por inyección de dependencia para validar el usuario antes de crear la orden
-  async validateUser(email: string) {
-    const user = await this.usersService.findByEmail(email);
+  async validateUser(id: string) {
+    const user = await this.usersService.findById(id);
 
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
     return user;
   }
+
   // Crear una nueva orden (Venta iniciada)
   async createOrder(email: string, dto: CreateOrderDto) {
     const user = await this.validateUser(email);
@@ -73,8 +74,8 @@ export class OrdersService {
     });
   }
 
-  async findAll(email: string, status?: OrderStatus) {
-    const user = await this.validateUser(email);
+  async findAllUserOrders(userId: string, status?: OrderStatus) {
+    const user = await this.validateUser(userId);
     return this.prisma.order.findMany({
       where: {
         userId: user.user_id, // Filtramos por el usuario actual
@@ -98,10 +99,53 @@ export class OrdersService {
     });
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} order`;
-  // }
+  async findAll(status?: OrderStatus) {
+    return this.prisma.order.findMany({
+      where: {
+        // Filtramos por el usuario actual
+        ...(status && { status }), // Si viene el status en el query, lo filtramos
+      },
+      include: {
+        items: {
+          include: {
+            movie: {
+              select: {
+                title: true,
+                poster: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc', // Las más recientes primero
+      },
+    });
+  }
 
+  async findOne(id: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { orderId: id },
+      include: {
+        items: {
+          include: {
+            movie: {
+              select: {
+                title: true,
+                poster: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Orden #${id} no encontrada`);
+    }
+
+    return order;
+  }
   // remove(id: number) {
   //   return `This action removes a #${id} order`;
   // }

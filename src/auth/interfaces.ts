@@ -8,12 +8,8 @@ export interface responseAuth {
   };
 }
 
-export interface UserActiveInterface {
-  email: string;
-  role: string;
-}
-
-export interface UserProfile {
+// Forma del Payload que se guardó desde el JWT
+export interface JwtPayload {
   userId: string;
   email: string;
   role: string;
@@ -21,6 +17,12 @@ export interface UserProfile {
   exp: number;
 }
 
+export interface UserActiveInterface {
+  userId: string;
+  role: string;
+}
+
+// Extendemos la Request de Express para incluir al usuario
 export interface RequestWithUser extends Request {
-  user: UserProfile;
+  user: JwtPayload;
 }

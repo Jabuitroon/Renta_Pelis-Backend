@@ -57,7 +57,7 @@ export class AuthService {
 
     // Definir el Payload (lo que viajará dentro del token)
     // Solo info no sensible.
-    const payload = { email: user.email, role: user.role };
+    const payload = { sub: user.user_id, email: user.email, role: user.role };
     const token = await this.jwtService.signAsync(payload);
 
     return {
@@ -65,8 +65,8 @@ export class AuthService {
     };
   }
 
-  async getProfile({ email }: { email: string; role: string }) {
-    const user = await this.usersService.findByEmail(email);
+  async getProfile({ userId }: { userId: string }) {
+    const user = await this.usersService.findById(userId);
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
     }

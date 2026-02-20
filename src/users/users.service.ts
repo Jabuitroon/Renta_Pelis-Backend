@@ -42,12 +42,21 @@ export class UsersService {
     sessions: true,
   };
 
+  async findById(id: string, select?: Prisma.UserSelect) {
+    return await this.prisma.user.findUnique({
+      where: {
+        user_id: id,
+      },
+      select, // Si no se pasa, trae todo el objeto
+    });
+  }
+
   async findByEmail(email: string, select?: Prisma.UserSelect) {
     return await this.prisma.user.findUnique({
       where: {
         email: email.toLowerCase().trim(),
       },
-      select, // Si no se pasa, trae todo el objeto
+      select,
     });
   }
 
