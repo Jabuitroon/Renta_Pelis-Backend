@@ -4,20 +4,23 @@ services:
     container_name: nest_api
     build:
       context: .
-      target: dev
+      # Debe coincidir con el que aparece Dockerfile
+      target: development
     ports:
       - "3000:3000"
       - "5500:5500"
     env_file:
       - .develop.env
     environment:
-      - NODE_ENV=develop
+      - NODE_ENV=development
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy # Condiciona a que la bd y redis estén full
+      redis:
+        condition: service_started
     volumes:
       - .:/app
-      - /app/node_modules
+      - /app/src/generated
     restart: unless-stopped
 
   db:
