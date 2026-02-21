@@ -15,6 +15,7 @@ import { Role } from '../auth/enums';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { Public } from '../common/decorators/public.decorator';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Roles(Role.Admin)
@@ -28,6 +29,7 @@ export class MoviesController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.moviesService.findAllMovies();
   }
