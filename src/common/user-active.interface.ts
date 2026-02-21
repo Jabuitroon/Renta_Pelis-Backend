@@ -1,5 +1,5 @@
 export interface UserActiveInterface {
-  userId: string;
+  sub: string;
   email: string;
   role: string;
 }

@@ -75,6 +75,8 @@ export class OrdersService {
   }
 
   async findAllUserOrders(userId: string, status?: OrderStatus) {
+    console.log('que viene?', userId);
+
     const user = await this.validateUser(userId);
     return this.prisma.order.findMany({
       where: {
@@ -102,8 +104,8 @@ export class OrdersService {
   async findAll(status?: OrderStatus) {
     return this.prisma.order.findMany({
       where: {
-        // Filtramos por el usuario actual
-        ...(status && { status }), // Si viene el status en el query, lo filtramos
+        // Si status existe, se agrega al objeto where; si no, se ignora
+        ...(status ? { status } : {}),
       },
       include: {
         items: {
@@ -146,7 +148,18 @@ export class OrdersService {
 
     return order;
   }
-  // remove(id: number) {
-  //   return `This action removes a #${id} order`;
-  // }
+
+  async remove(id: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { orderId: id },
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Orden #${id} no encontrada`);
+    }
+
+    return await this.prisma.order.delete({
+      where: { orderId: id },
+    });
+  }
 }

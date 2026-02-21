@@ -10,7 +10,7 @@ export interface responseAuth {
 
 // Forma del Payload que se guardó desde el JWT
 export interface JwtPayload {
-  userId: string;
+  sub: string;
   email: string;
   role: string;
   iat: number;
@@ -18,7 +18,7 @@ export interface JwtPayload {
 }
 
 export interface UserActiveInterface {
-  userId: string;
+  sub: string;
   role: string;
 }
 

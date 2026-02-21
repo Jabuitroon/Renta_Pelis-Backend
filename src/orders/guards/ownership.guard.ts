@@ -11,6 +11,7 @@ import {
   OwnershipOptions,
 } from '../decorators/ownership.decorator';
 import { OrdersService } from '../../orders/orders.service'; // O un servicio genérico
+import { RequestWithUser } from '../../auth/interfaces';
 
 @Injectable()
 export class OwnershipGuard implements CanActivate {
@@ -26,11 +27,12 @@ export class OwnershipGuard implements CanActivate {
     );
     if (!options) return true;
 
-    const request = context.switchToHttp().getRequest();
-    console.log(request);
+    const request = context.switchToHttp().getRequest<RequestWithUser>();
 
     const user = request.user; // Inyectado por AuthGuard
-    const resourceId = request.params[options.paramName];
+    console.log(user);
+    const resourceId = request.params[options.paramName] as string;
+    console.log('resourceId', resourceId);
 
     if (!user || !resourceId) return false;
 
@@ -42,8 +44,7 @@ export class OwnershipGuard implements CanActivate {
       throw new NotFoundException('Recurso no encontrado');
     }
 
-    // Validar propiedad (Ajusta 'userId' o 'userEmail' según tu DB)
-    if (resource.userId !== user.userId) {
+    if (resource.userId !== user.sub) {
       throw new ForbiddenException('No tienes permiso sobre este recurso');
     }
 

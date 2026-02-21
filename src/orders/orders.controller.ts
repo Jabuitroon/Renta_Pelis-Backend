@@ -6,6 +6,7 @@ import {
   UseGuards,
   Param,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -35,9 +36,10 @@ export class OrdersController {
 
   @Get('my-orders')
   @Roles(Role.Client)
+  @UseGuards(OwnershipGuard) // Guard específico de propiedad
   async findUserOrders(@ActiveUser() user: UserActiveInterface) {
     // En un entorno real, el userId vendría del @Request() req.user
-    return this.ordersService.findAllUserOrders(user.email);
+    return this.ordersService.findAllUserOrders(user.sub);
   }
 
   @Get()
@@ -57,8 +59,9 @@ export class OrdersController {
     return this.ordersService.findOne(id);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.ordersService.remove(+id);
-  // }
+  @Delete(':id')
+  @UseGuards(OwnershipGuard)
+  remove(@Param('id') id: string) {
+    return this.ordersService.remove(id);
+  }
 }
