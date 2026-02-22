@@ -34,9 +34,6 @@ COPY . .
 # 4. Generar Prisma (Usamos una URL dummy para que el build no falle)
 RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpx prisma generate
 
-# Aseguramos que NODE_ENV sea production para el build de Nest
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
 RUN pnpm run build
 # Limpiamos para dejar solo lo necesario para ejecución
 RUN pnpm prune --production
@@ -49,7 +46,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
-
 COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 COPY --from=builder --chown=node:node /app/dist ./dist
 # Copia la carpeta generada desde el builder a la misma ruta en producción
@@ -65,4 +61,4 @@ USER node
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpx prisma migrate deploy && node dist/main"]
+CMD ["sh", "-c", "pnpm run db:deploy && pnpm run start:prod"]
