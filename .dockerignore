@@ -6,3 +6,4 @@ build
 .gitignore
 README.md
 .vscode/
+.env
