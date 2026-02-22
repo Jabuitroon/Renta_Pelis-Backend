@@ -32,7 +32,7 @@ WORKDIR /app
 COPY . .
 
 # 4. Generar Prisma
-RUN pnpm prisma generate
+RUN pnpx prisma generate
 
 # Aseguramos que NODE_ENV sea production para el build de Nest
 ARG NODE_ENV=production
@@ -62,4 +62,4 @@ COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 COPY --from=builder /app/prisma ./prisma
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpm prisma migrate deploy --schema ./prisma/schema.prisma && node dist/main"]
+CMD ["sh", "-c", "pnpx prisma migrate deploy --schema ./prisma/schema.prisma && node dist/main"]
