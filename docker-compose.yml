@@ -15,11 +15,12 @@ services:
       - NODE_ENV=development
     depends_on:
       db:
-        condition: service_healthy # Condiciona a que la bd y redis estén full
+        condition: service_started
       redis:
         condition: service_started
     volumes:
       - .:/app
+      - /app/node_modules
       - /app/src/generated
     restart: unless-stopped
 
