@@ -42,12 +42,13 @@ RUN pnpm run build
 RUN pnpm prune --production
 
 # Stage 4: Production
-FROM node:20-alpine AS production
+FROM base AS production
 WORKDIR /app
 
 # Seteamos el entorno a producción por defecto
 ENV NODE_ENV=production
 # Argumento de seguridad: No correr como root
+RUN chown -R node:node /app
 USER node
 
 COPY --from=builder /app/dist ./dist
@@ -61,4 +62,4 @@ COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 COPY --from=builder /app/prisma ./prisma
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpx prisma migrate deploy && node dist/main"]
+CMD ["sh", "-c", "pnpm prisma migrate deploy && node dist/main"]
