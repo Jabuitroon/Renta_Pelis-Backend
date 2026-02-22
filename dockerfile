@@ -47,19 +47,22 @@ WORKDIR /app
 
 # Seteamos el entorno a producción por defecto
 ENV NODE_ENV=production
-# Argumento de seguridad: No correr como root
-RUN chown -R node:node /app
-USER node
 
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/package*.json ./
-
+COPY --from=builder /app/dist ./dist
 # Copia la carpeta generada desde el builder a la misma ruta en producción
 COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 # Opcional pero recomendado: Copia el schema para migraciones o introspección
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package.json ./package.json
+
+
+# Argumento de seguridad: No correr como root
+RUN chown -R node:node /app
+USER node
+
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpm run db:deploy && node dist/main"]
+CMD ["sh", "-c", "pnpx prisma migrate deploy && node dist/main"]
