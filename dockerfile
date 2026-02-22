@@ -56,7 +56,6 @@ COPY --from=builder --chown=node:node /app/package.json ./package.json
 
 
 # Argumento de seguridad: No correr como root
-RUN chown -R node:node /app
 USER node
 
 EXPOSE 3000
