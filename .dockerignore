@@ -2,7 +2,6 @@ dist/
 node_modules/
 postgres/
 build
-prisma/migrations
 .git
 .gitignore
 README.md
