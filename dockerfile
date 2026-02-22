@@ -17,11 +17,6 @@ COPY package.json pnpm-lock.yaml ./
 # Usamos --frozen-lockfile para asegurar que Docker use exactamente lo que dice tu lock
 RUN pnpm install --frozen-lockfile
 
-# 4. Generar Prisma
-COPY prisma ./prisma
-COPY . .
-RUN pnpm prisma generate
-
 # Stage 2: Development (Para usar con docker-compose)
 FROM base AS development
 ENV NODE_ENV=development    
@@ -31,9 +26,13 @@ CMD ["pnpm", "run", "start:dev"]
 
 # Stage 3: Builder
 FROM base AS builder
+WORKDIR /app
 # 1. Copiar el resto del código del proyecto (excepto lo que esté en .dockerignore)
 # Esto incluye tsconfig.json, nest-cli.json y archivos de configuración esenciales
 COPY . .
+
+# 4. Generar Prisma
+RUN pnpm prisma generate
 
 # Aseguramos que NODE_ENV sea production para el build de Nest
 ARG NODE_ENV=production
@@ -61,4 +60,4 @@ COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 COPY --from=builder /app/prisma ./prisma
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpm prisma migrate deploy && node dist/main"]
+CMD ["sh", "-c", "pnpx prisma migrate deploy && node dist/main"]

@@ -16,7 +16,9 @@
     "outDir": "./dist",
     "paths": {
       "@app/*": ["./src/app/*"],
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@prisma/client": ["./src/generated/prisma"],
+      "@prisma/enums": ["./src/generated/prisma/enums"]
     },
     "incremental": true,
     "skipLibCheck": true,
