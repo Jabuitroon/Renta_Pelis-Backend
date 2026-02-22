@@ -50,13 +50,13 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/dist ./dist
 # Copia la carpeta generada desde el builder a la misma ruta en producción
-COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
+COPY --from=builder --chown=node:node /app/src/generated/prisma ./src/generated/prisma
 # Opcional pero recomendado: Copia el schema para migraciones o introspección
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder --chown=node:node /app/prisma ./prisma
+COPY --from=builder --chown=node:node /app/package.json ./package.json
 
 
 # Argumento de seguridad: No correr como root
