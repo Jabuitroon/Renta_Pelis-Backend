@@ -31,8 +31,8 @@ WORKDIR /app
 # Esto incluye tsconfig.json, nest-cli.json y archivos de configuración esenciales
 COPY . .
 
-# 4. Generar Prisma
-RUN pnpx prisma generate
+# 4. Generar Prisma (Usamos una URL dummy para que el build no falle)
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpx prisma generate
 
 # Aseguramos que NODE_ENV sea production para el build de Nest
 ARG NODE_ENV=production
