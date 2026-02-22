@@ -60,4 +60,4 @@ USER node
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "pnpm run db:deploy && pnpm run start:prod"]
+CMD ["sh", "-c", "pnpx prisma migrate deploy && node dist/src/main.js"]
