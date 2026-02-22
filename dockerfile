@@ -53,6 +53,7 @@ USER node
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package*.json ./
 
 # Copia la carpeta generada desde el builder a la misma ruta en producción
 COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
