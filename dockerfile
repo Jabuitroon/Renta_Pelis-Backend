@@ -19,6 +19,7 @@ RUN pnpm install --frozen-lockfile
 
 # 4. Generar Prisma
 COPY prisma ./prisma
+COPY . .
 RUN pnpm prisma generate
 
 # Stage 2: Development (Para usar con docker-compose)
