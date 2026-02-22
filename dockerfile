@@ -60,4 +60,4 @@ COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 COPY --from=builder /app/prisma ./prisma
 EXPOSE 3000
 
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "pnpm prisma migrate deploy && node dist/main"]
