@@ -32,9 +32,15 @@ import { envSchema } from './config/env.load';
     }),
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: async () => ({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
         store: await redisStore({
-          socket: { host: 'redis', port: 6379 },
+          socket: {
+            host: configService.get<string>('REDIS_HOST'),
+            port: configService.get<number>('REDIS_PORT'),
+          },
+          password: configService.get<string>('REDIS_PASSWORD'),
+          ttl: 600, // Tiempo de vida por defecto (segundos)
         }),
       }),
       inject: [ConfigService],
