@@ -48,7 +48,7 @@ services:
     image: redis:7-alpine
     # Puerto izquierdo: Puerto del host, Puerto derecho: Puerto del contenedor
     ports:
-      - "6379"
+      - "6379:6379"
     volumes:
     # Mountar un volumen de datos persistentes para Redis
       - redis_data:/data
