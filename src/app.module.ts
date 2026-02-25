@@ -33,17 +33,23 @@ import { envSchema } from './config/env.load';
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        store: await redisStore({
-          socket: {
-            host: configService.get<string>('REDIS_HOST'),
-            port: 6379,
-          },
-          password: configService.get<string>('REDIS_PASSWORD'),
-          ttl: 600, // Tiempo de vida por defecto (segundos)
-        }),
-      }),
       inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const host = configService.get<string>('REDIS_HOST'); // "redis" en Docker, "red-xxx" en Render
+        const port = configService.get<string>('REDIS_PORT');
+        const password = configService.get<string>('REDIS_PASSWORD');
+        const url = password
+          ? `redis://:${password}@${host}:${port}`
+          : `redis://${host}:${port}`;
+
+        console.log(`Conectando a Redis en: redis://${host}:${port}`);
+        return {
+          store: await redisStore({
+            url: url,
+            ttl: 600,
+          }),
+        };
+      },
     }),
     // --- Para render.com ---
     // ssl: true,
