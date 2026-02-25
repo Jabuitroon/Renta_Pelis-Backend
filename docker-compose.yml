@@ -56,7 +56,7 @@ services:
     volumes:
     # Mountar un volumen de datos persistentes para Redis
       - redis_data:/data
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    command: redis-server --loglevel warning --requirepass ${REDIS_PASSWORD}
     networks: 
       - prisma-network
     healthcheck:
