@@ -3,21 +3,21 @@ services:
   api:
     container_name: nest_api
     build:
-      context: .
       # Debe coincidir con el que aparece Dockerfile
+      context: .
       target: development
     ports:
       - "3000:3000"
       - "5500:5500"
     networks: 
       - prisma-network
+    environment:
+      - NODE_ENV=development
     healthcheck: 
       test: ["CMD-SHELL", "pg_isready -U prisma -d postgres"] 
       interval: 5s
       timeout: 2s
       retries: 20
-    environment:
-      - NODE_ENV=development
     depends_on:
       db:
         condition: service_started
