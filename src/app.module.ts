@@ -36,7 +36,7 @@ import { envSchema } from './config/env.load';
       useFactory: async (configService: ConfigService) => ({
         store: await redisStore({
           socket: {
-            host: configService.get<string>('REDIS_URL'),
+            host: configService.get<string>('REDIS_HOST'),
             port: 6379,
           },
           password: configService.get<string>('REDIS_PASSWORD'),
