@@ -37,7 +37,7 @@ import { envSchema } from './config/env.load';
         store: await redisStore({
           socket: {
             host: configService.get<string>('REDIS_HOST'),
-            port: Number(configService.get<number>('REDIS_PORT')),
+            port: 6379,
           },
           password: configService.get<string>('REDIS_PASSWORD'),
           ttl: 600, // Tiempo de vida por defecto (segundos)
