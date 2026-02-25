@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
@@ -14,12 +14,12 @@ import { BcryptService } from '../providers/hashing/bcrypt.service';
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({
-      imports: [ConfigModule], // Importante: Importar ConfigModule aquí si no es global
+      global: true,
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: config.get<number>('JWT_EXPIRES_IN') || 3600,
+          expiresIn: Number(config.get('JWT_EXPIRES_IN') || 3600),
         },
       }),
     }),
@@ -32,5 +32,6 @@ import { BcryptService } from '../providers/hashing/bcrypt.service';
     },
   ],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

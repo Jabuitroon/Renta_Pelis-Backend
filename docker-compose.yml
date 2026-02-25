@@ -46,6 +46,10 @@ services:
   redis:
     container_name: redis_cache
     image: redis:7-alpine
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     # Puerto izquierdo: Puerto del host, Puerto derecho: Puerto del contenedor
     ports:
       - "6379:6379"
