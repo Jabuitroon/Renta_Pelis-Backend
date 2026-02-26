@@ -40,6 +40,14 @@ import { envSchema } from './config/env.load';
           store: await redisStore({
             url: url,
             ttl: 600,
+            // Configuración necesaria para conexiones estables a servicios Cloud
+            socket: {
+              tls: true, // Upstash requiere TLS activo
+              reconnectStrategy: (retries) => {
+                console.log(`Reconectando a Redis... Intento: ${retries}`);
+                return Math.min(retries * 50, 500); // Estrategia de reconexión
+              },
+            },
           }),
         };
       },
