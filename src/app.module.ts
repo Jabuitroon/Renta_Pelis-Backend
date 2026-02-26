@@ -35,14 +35,7 @@ import { envSchema } from './config/env.load';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const host = configService.get<string>('REDIS_HOST'); // "redis" en Docker, "red-xxx" en Render
-        const port = configService.get<string>('REDIS_PORT');
-        const password = configService.get<string>('REDIS_PASSWORD');
-        const url = password
-          ? `redis://:${password}@${host}:${port}`
-          : `redis://${host}:${port}`;
-
-        console.log(`Conectando a Redis en: redis://${host}:${port}`);
+        const url = configService.get<string>('REDIS_URL');
         return {
           store: await redisStore({
             url: url,

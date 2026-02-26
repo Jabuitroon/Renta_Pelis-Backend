@@ -11,20 +11,11 @@ services:
       - "5500:5500"
     networks: 
       - prisma-network
-    environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-    # healthcheck: 
-    #   test: ["CMD-SHELL", "pg_isready -U prisma -d postgres"] 
-    #   interval: 5s
-    #   timeout: 2s
-    #   retries: 20
     depends_on:
       db:
         condition: service_started
       redis:
-        condition: service_health
+        condition: service_started
     volumes:
       - .:/app
       - /app/node_modules
@@ -56,9 +47,7 @@ services:
     volumes:
     # Mountar un volumen de datos persistentes para Redis
       - redis_data:/data
-    command: redis-server --loglevel warning --requirepass ${REDIS_PASSWORD}
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
