@@ -21,8 +21,8 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.ALLOWED_ORIGINS?.split(',') || [],
     credentials: true, // Permite cookies
-    // methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    // allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Es mejor dejarlo claro
+    allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
   const config = new DocumentBuilder()
@@ -33,9 +33,9 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 4000);
   console.log(
-    `🚀 Server running on http://localhost:${process.env.PORT || 30000}`,
+    `🚀 Server running on http://localhost:${process.env.PORT || 40000}`,
   );
 }
 bootstrap();

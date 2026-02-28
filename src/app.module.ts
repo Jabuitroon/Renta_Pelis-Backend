@@ -23,6 +23,7 @@ import { envSchema } from './config/env.load';
       envFilePath: [`.${process.env.NODE_ENV}.env`, '.env'],
       validate: (config) => {
         const parsed = envSchema.safeParse(config);
+        console.log(`.${process.env.NODE_ENV}.env`, '.env');
         if (!parsed.success) {
           console.error('❌ Config validation error:', parsed.error.format());
           throw new Error('Invalid environment variables');
@@ -36,13 +37,15 @@ import { envSchema } from './config/env.load';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const url = configService.get<string>('REDIS_URL');
+        console.log(url, 'url');
+
         return {
           store: await redisStore({
             url: url,
             ttl: 600,
             // Configuración necesaria para conexiones estables a servicios Cloud
             socket: {
-              tls: true, // Upstash requiere TLS activo
+              tls: process.env.NODE_ENV != 'develop', // Upstash requiere TLS activo
               reconnectStrategy: (retries) => {
                 console.log(`Reconectando a Redis... Intento: ${retries}`);
                 return Math.min(retries * 50, 500); // Estrategia de reconexión
@@ -52,13 +55,6 @@ import { envSchema } from './config/env.load';
         };
       },
     }),
-    // --- Para render.com ---
-    // ssl: true,
-    // extra: {
-    //   ssl: {
-    //     rejectUnauthorized: false, // Permite certificados auto-firmados de Render
-    //   },
-    // },
     UsersModule,
     PrismaModule,
     SessionsModule,
