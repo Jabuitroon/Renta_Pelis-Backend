@@ -22,8 +22,9 @@ export class AuthService {
   async register(newUser: RegisterDto): Promise<responseAuth> {
     try {
       const user = await this.usersService.create(newUser);
+      const payload = { sub: user.user_id, email: user.email, role: user.role };
       return {
-        accessToken: this.jwtService.sign({ id: user.user_id }),
+        accessToken: this.jwtService.sign(payload),
         user: {
           id: user.user_id,
           email: user.email,
@@ -41,6 +42,8 @@ export class AuthService {
     email,
     password,
   }: LoginDto): Promise<{ access_token: string }> {
+    console.log('correo que sale', email);
+
     const user = await this.usersService.findByEmail(email);
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');

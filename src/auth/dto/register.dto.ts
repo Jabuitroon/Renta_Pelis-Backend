@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsPhoneNumber,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { AuthProviderEnum, UserRole } from '../../generated/prisma/enums';
 
 export class RegisterDto {
@@ -20,7 +21,9 @@ export class RegisterDto {
   @MinLength(2)
   lastName: string;
 
-  @IsEmail()
+  @IsNotEmpty({ message: 'El email es requerido' })
+  @IsEmail({}, { message: 'El formato del email no es válido' })
+  @Transform(({ value }: { value: string }) => value?.trim().toLowerCase()) // Limpia espacios y pasa a minúsculas
   email: string;
 
   @IsString()
