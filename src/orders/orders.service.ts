@@ -26,8 +26,8 @@ export class OrdersService {
   }
 
   // Crear una nueva orden (Venta iniciada)
-  async createOrder(email: string, dto: CreateOrderDto) {
-    const user = await this.validateUser(email);
+  async createOrder(id: string, dto: CreateOrderDto) {
+    const user = await this.validateUser(id);
 
     // 1. Usar una Transacción de Prisma para asegurar integridad
     return this.prisma.$transaction(async (tx) => {

@@ -31,7 +31,7 @@ export class OrdersController {
     @ActiveUser() user: UserActiveInterface,
     @Body() createOrderDto: CreateOrderDto,
   ) {
-    return this.ordersService.createOrder(user.email, createOrderDto);
+    return this.ordersService.createOrder(user.sub, createOrderDto);
   }
 
   @Get('my-orders')
