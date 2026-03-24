@@ -15,7 +15,7 @@ COPY package.json pnpm-lock.yaml ./
 
 # 3. Instalar dependencias
 # Usamos --frozen-lockfile para asegurar que Docker use exactamente lo que dice tu lock
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Stage 2: Development (Para usar con docker-compose)
 FROM base AS development
