@@ -11,7 +11,7 @@ import {
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ActiveUser } from '../common/decorators/active-user.decorator';
-import type { UserActiveInterface } from '../common/user-active.interface';
+import type { UserActiveInterface } from '../common/interfaces/user-active.interface';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
